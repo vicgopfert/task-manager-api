@@ -1,0 +1,42 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Estudar",
+      "description": "Estudar curso de React",
+      "time": "morning",
+      "status": "not_started"
+    },
+    {
+      "id": 2,
+      "title": "Treinar",
+      "description": "Fazer exercícios de musculação",
+      "time": "morning",
+      "status": "not_started"
+    },
+    {
+      "id": 3,
+      "title": "Fazer compras",
+      "description": "Comprar alimentos para a semana",
+      "time": "afternoon",
+      "status": "in_progress"
+    },
+    {
+      "id": 4,
+      "title": "Cozinhar",
+      "description": "Preparar refeição saudável",
+      "time": "afternoon",
+      "status": "in_progress"
+    },
+    {
+      "id": 5,
+      "title": "Descansar",
+      "description": "Assistir série ou filme",
+      "time": "evening",
+      "status": "done"
+    }
+  ],
+  "water": {
+    "consumed": 1500
+  }
+}
