@@ -2,7 +2,14 @@
 
 API REST simples baseada em [json-server](https://github.com/typicode/json-server), criada para servir de backend ao frontend do Task Manager (https://github.com/vicgopfert/task-manager).
 
-> **Os dados não são persistidos.** A API roda em memória: cada reinício (ou cold start na Vercel) recarrega o estado inicial do `db.json`. Isso é intencional — o foco do projeto é a apresentação do frontend.
+As requisições de escrita (`POST`, `PUT`, `PATCH`, `DELETE`) alteram o banco de verdade, mas o alcance dessa alteração depende de onde a API está rodando:
+
+| Ambiente | Onde grava | Persistência |
+| --- | --- | --- |
+| Local (`npm start`) | o próprio `db.json` | permanente, sobrevive a reinícios |
+| Vercel | cópia no diretório temporário | dura enquanto a instância estiver ativa; volta ao estado do `db.json` no cold start |
+
+> Na Vercel o filesystem da função é somente leitura (exceto o diretório temporário), então não há como gravar no `db.json` publicado. Instâncias concorrentes também não compartilham estado. Isso é intencional — o foco do projeto é a apresentação do frontend, não a persistência dos dados.
 
 ## Rodando localmente
 
@@ -100,7 +107,9 @@ O projeto está configurado para a Vercel. O `vercel.json` redireciona todas as 
 vercel
 ```
 
-Como o filesystem da Vercel é somente leitura, `api/server.js` carrega o `db.json` como objeto (`require`), fazendo o json-server usar o adapter em memória do lowdb. É o que permite que `POST`, `PATCH` e `DELETE` funcionem sem erro — ao custo de não persistirem entre invocações.
+Como o filesystem da Vercel é somente leitura, `api/server.js` detecta o ambiente pela variável `VERCEL` e, quando está em produção, copia o `db.json` para o diretório temporário no cold start e passa a gravar nessa cópia. Localmente ele grava direto no `db.json`. Em ambos os casos o json-server usa o adapter `FileSync` do lowdb, então as escritas funcionam normalmente.
+
+O `db.json` é lido em tempo de execução, e não por `require`, então o file tracing da Vercel não o detecta sozinho — daí o `includeFiles` no `vercel.json`, que garante que o arquivo seja empacotado junto com a função.
 
 ## Estrutura
 

@@ -1,8 +1,19 @@
 const jsonServer = require("json-server");
-const db = require("../db.json");
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
+
+const seedFile = path.join(__dirname, "..", "db.json");
+
+const isServerless = Boolean(process.env.VERCEL);
+const dbFile = isServerless ? path.join(os.tmpdir(), "db.json") : seedFile;
+
+if (isServerless && !fs.existsSync(dbFile)) {
+  fs.copyFileSync(seedFile, dbFile);
+}
 
 const server = jsonServer.create();
-const router = jsonServer.router(db);
+const router = jsonServer.router(dbFile);
 const middlewares = jsonServer.defaults();
 
 server.use(middlewares);
